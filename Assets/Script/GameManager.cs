@@ -155,11 +155,19 @@ public class GameManager : MonoBehaviour
     /// Ends the game when player escapes.
     public void CompleteGame()
     {
+        // Hide other UI so game end screen is clean.
+        takeOffPanel.SetActive(false);
+        restartPanel.SetActive(false);
+
+        objectiveText.gameObject.SetActive(false);
+        promptText.gameObject.SetActive(false);
+        messageText.gameObject.SetActive(false);
+
+        // Show only the final game end panel.
         gameEndPanel.SetActive(true);
-        ShowMessage("You repaired the spacecraft and escaped.");
+
         Time.timeScale = 0f;
     }
-
     /// Shows interaction prompt.
     /// <param name="text">Prompt message to show.</param>
     public void ShowPrompt(string text)
