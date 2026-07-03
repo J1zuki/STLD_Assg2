@@ -5,14 +5,7 @@
 using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-
-/// Enum for different collectible types.
-public enum CollectibleType
-{
-    Scrap,
-    EnergyCoil,
-    Fuel
-}
+using static CollectibleType;
 
 /// Controls the main game progress, collectible count, death state, and escape state.
 public class GameManager : MonoBehaviour
@@ -23,11 +16,14 @@ public class GameManager : MonoBehaviour
     /// Number of scrap pieces needed.
     [SerializeField] private int requiredScrap = 3;
 
+    /// Number of energy coils needed.
+    [SerializeField] private int requiredEnergyCoil = 5;
+
     /// Current scrap collected.
     private int currentScrap;
 
-    /// Checks if energy coil has been collected.
-    private bool hasEnergyCoil;
+    /// Current energy coils collected.
+    private int currentEnergyCoil;
 
     /// Checks if fuel has been collected.
     private bool hasFuel;
@@ -73,7 +69,7 @@ public class GameManager : MonoBehaviour
         UpdateObjectiveUI();
     }
 
-    /// Restarts the level when player presses R on death screen.
+    /// Checks for restart input after death.
     private void Update()
     {
         if (isDead && Input.GetKeyDown(KeyCode.R))
@@ -93,7 +89,7 @@ public class GameManager : MonoBehaviour
         }
         else if (collectibleType == CollectibleType.EnergyCoil)
         {
-            hasEnergyCoil = true;
+            currentEnergyCoil++;
             ShowMessage("Energy Coil collected.");
         }
         else if (collectibleType == CollectibleType.Fuel)
@@ -106,10 +102,12 @@ public class GameManager : MonoBehaviour
     }
 
     /// Checks if all required items have been collected.
-    /// <returns>True if player has all collectibles.</returns>
+    /// <returns>True if player has all required collectibles.</returns>
     public bool HasAllCollectibles()
     {
-        return currentScrap >= requiredScrap && hasEnergyCoil && hasFuel;
+        return currentScrap >= requiredScrap &&
+               currentEnergyCoil >= requiredEnergyCoil &&
+               hasFuel;
     }
 
     /// Shows the restart UI when player dies.
@@ -134,7 +132,7 @@ public class GameManager : MonoBehaviour
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
 
-    /// Shows the take off ready panel.
+    /// Shows take off ready panel if all collectibles are collected.
     public void ShowTakeOffReady()
     {
         if (HasAllCollectibles())
@@ -187,7 +185,7 @@ public class GameManager : MonoBehaviour
     {
         objectiveText.text =
             "Scrap: " + currentScrap + " / " + requiredScrap +
-            "\nEnergy Coil: " + (hasEnergyCoil ? "Collected" : "Missing") +
+            "\nEnergy Coil: " + currentEnergyCoil + " / " + requiredEnergyCoil +
             "\nFuel: " + (hasFuel ? "Collected" : "Missing");
     }
 }
